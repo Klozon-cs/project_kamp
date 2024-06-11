@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/app.css">
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+    <div class="w-100 d-flex header">
+        <div>
+            <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+        </div>
+        <div>
+            <a href="http://" class="btn--">Academy</a>
+            <a href="http://" class="btn--">Research</a>
+        </div>
+    </div>
+    <div class="d-flex w-100 h-100">
+        <div class="d-flex justify-content-center align-items-center d-none" id="div-preview"
+            onclick="closePreview(this)">
+            <img src="" alt="" id="preview-image">
+        </div>
+        <nav>
+            <%- navItems%>
+        </nav>
+        <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
+            <div class="content">
+                <form action="/store" method="post" id="storeForm">
+
+                    <input type="text" class="title-big doc-input" placeholder="Title big" name="title-big"
+                        id="title-big">
+
+                    <input type="text" class="title-medium doc-input" placeholder="Title medium" name="title-big"
+                        id="title-big">
+
+                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
+                    <input type="hidden" name="first">
+
+                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
+                    <input type="hidden" name="second">
+
+                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
+                    <input type="hidden" name="first">
+
+
+
+                    <div class="">
+                        <input type="text" class="doc-input video-input" placeholder="Youtube Url">
+                        <iframe src="" class="" frameborder="0"></iframe>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+
+                <!-- image -->
+                <div class="mb-5">
+                    <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url">
+                    <img class="w-100 zoomable" alt="">
+                </div>
+
+                <input type="file" class="doc-input file-input d-none" accept="image/*" placeholder="Youtube Url">
+                <div class="mb-5 image-grid">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png" onclick="zoomImage(this)">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg"
+                        onclick="zoomImage(this)">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg">
+                </div>
+
+
+            </div>
+        </main>
+
+
+    </div>
+
+
+
+
+    <script>
+
+        document.addEventListener('keydown', function () {
+            // Make the text bold if user presses the SHIFT button and if there is something highlighted
+            if (event.keyCode == 16 && window.getSelection().toString() != "") {
+                document.execCommand("bold");
+            }
+        })
+
+
+        //Imge preview
+        let fileInputs = document.getElementsByClassName("file-input");
+
+        for (let fileInput of fileInputs) {
+            fileInput.addEventListener("change", function () {
+                const preview = event.target.nextElementSibling;
+                const file = fileInput.files[0];
+                let reader = new FileReader();
+
+                reader.onloadend = function () {
+                    preview.src = reader.result;
+                }
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.src = "";
+                }
+            });
+        }
+
+        const images = document.getElementsByClassName('zoomable');
+        for (const image of images) {
+            image.addEventListener("click", () => {
+                const preview_image = document.getElementById("preview-image");
+                const preview_div = document.getElementById("div-preview");
+                preview_image.src = event.target.src;
+                preview_div.classList.remove("d-none");
+            })
+        }
+        function closePreview(preview) {
+            preview.classList.add("d-none")
+        }
+
+
+
+        //Convert youtube links to enmbed link 
+        let videos = document.getElementsByClassName("video-input");
+
+        for (let video of videos) {
+            video.addEventListener("change", function () {
+                const inputValue = event.target.value;
+                const iframe = event.target.nextElementSibling;
+                let link;
+                if (inputValue.includes("https://youtu.be/")) link = inputValue.replace("https://youtu.be/", "");
+
+                if (inputValue.includes("https://www.youtube.com/watch?v=")) link = inputValue.replace("https://www.youtube.com/watch?v=", "");
+
+                iframe.src = "https://www.youtube.com/embed/" + link;
+            });
+        }
+
+
+
+
+        let divs = document.getElementsByClassName("div-input");
+
+        //Div act like an input, placeholder for div 
+        for (let div of divs) {
+            div.addEventListener("focus", function () {
+                if (div.textContent == "Text") div.innerHTML = "";
+            });
+
+            div.addEventListener("focusout", function () {
+                if (div.textContent == "") div.innerHTML = "Text";
+            });
+        }
+
+        function divContentToInput(div) {
+            if (div.innerHTML != "Text") {
+                const input = div.nextElementSibling;
+                input.value = div.innerHTML;
+            }
+        }
+
+        document.getElementById('storeForm').onsubmit = function (event) {
+            for (const div of divs)
+                divContentToInput(div);
+        }
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

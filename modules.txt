@@ -1,0 +1,6 @@
+npm i 
+
+bootstrap
+express
+mysql2
+body-parser

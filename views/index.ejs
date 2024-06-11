@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/app.css">
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body onkeydown="myFunction(event)">
+    <header>
+        <div>
+            <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+        </div>
+        <div>
+            <a href="http://" class="btn--">Academy</a>
+            <a href="http://" class="btn--">Research</a>
+        </div>
+    </header>
+    <div class="d-flex w-100 h-100">
+        <nav>
+            <%- navItems%>
+                <!-- <section>
+                <input type="checkbox" name="checkbox" class="toogle" id="1">
+
+                <label for="1">Section 1
+                    <i class="fa-solid fa-angle-right"></i>
+                </label>
+                <div class="toogle-div">
+                    <a href="http://" class="nav-link">Asd</a>
+                </div>
+            </section>
+
+
+
+            <section>
+                <input type="checkbox" name="checkbox" class="toogle" id="2">
+
+                <label for="2">Section 2
+                    <i class="fa-solid fa-angle-right"></i>
+                </label>
+                <div class="toogle-div">
+                    <a href="http://" class="nav-link">Asd</a>
+                </div>
+            </section>
+
+            <section>
+                <input type="checkbox" name="checkbox" class="toogle" id="3">
+
+                <label for="3">Section 3
+                    <i class="fa-solid fa-angle-right"></i>
+                </label>
+                <div class="toogle-div">
+                    <a href="http://" class="nav-link">Asd</a>
+                </div>
+            </section> -->
+        </nav>
+        <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
+            <div class="content" contenteditable="false">
+                <h1 class="title-big">Title Big</h1>
+                <input type="text" class="title-big doc-input" placeholder="Title medium" name="title-big"
+                    id="title-big">
+                <h3 class="title-medium">
+                    Title Medium
+                </h3>
+                <input type="text" class="title-medium doc-input" placeholder="Title medium" name="title-big"
+                    id="title-big">
+                <!-- 
+                <ol>
+                    <li>asd</li>
+                    <li>asd</li>
+                    <li>123</li>
+                    <li>rtghh</li>
+                    <li>fger3</li>
+                </ol>
+
+                <ul>
+                    <li>asd</li>
+                    <li>asd</li>
+                    <li>123</li>
+                    <li>rtghh</li>
+                    <li>fger3</li>
+                </ul> -->
+
+                <p class="text-regular">Regular Text
+                    dolor, sit amet consectetur adipisicing elit. Asperiores et vero, nobis unde totam
+                    aspernatur voluptas quo nam, eum nesciunt ad alias omnis aliquid beatae. Sit consequatur architecto
+                    rerum magnam?
+                </p>
+
+                <div contenteditable="true" class="text-regular doc-input" onchange="divContentToInput(this)">
+
+                </div>
+                <input type="hidden" name="">
+
+
+                <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/-ag?si=bCkr2JhpGswnVh6U"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+                <img src="/public/img/unnamed.jpg" class="w-100" alt=""> -->
+
+
+                <%- contentHTML %>
+
+
+            </div>
+        </main>
+
+
+    </div>
+
+
+
+
+    <script>
+        function myFunction(event) {
+            if (event.keyCode == 16) {
+                // Execute command if user presses the SHIFT button:
+                document.execCommand("bold");
+            }
+        }
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
