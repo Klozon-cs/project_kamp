@@ -50,7 +50,6 @@ for (const iterator in req.body) {
 	console.log(iterator);
 }
 
-console.log(req.body.first[1]);
 });
 
 //Update

@@ -228,3 +228,7 @@ iframe {
 .btnDelete:hover,.zoomable:hover{
 	cursor: pointer;
 }
+
+.list-input li{
+	margin-left: 20px;
+}
