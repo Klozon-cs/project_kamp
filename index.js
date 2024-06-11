@@ -2,6 +2,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
 const path = require('path');
+const multer = require('multer');
 
 const server = app.listen(5600, () => {
     console.log("Server is running on http://localhost:5600");
@@ -23,6 +24,31 @@ const route = require('./Routes/documentation');
 const { AsyncLocalStorage } = require('async_hooks');
 
 app.use('/', route);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // const db = require("./database");
 

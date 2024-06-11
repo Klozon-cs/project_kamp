@@ -2,6 +2,25 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database");
 const templates = require("../templates");
+const multer = require("multer");
+const path = require("path");
+
+// Set up multer to handle multiple file uploads
+const destination = path.resolve(__dirname, "..") + "/public/uploads";
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, destination);
+	},
+	filename: function (req, file, cb) {
+		cb(
+			null,
+			new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_") +
+				"_" +
+				file.originalname
+		);
+	},
+});
+const upload = multer({ storage: storage });
 
 /*----------------- CRUD Routes -----------------*/
 
@@ -30,7 +49,7 @@ router.get("/documentation/:id", async (req, res) => {
 	}
 
 	let contents = await db.getMany("contents", "chapter_id", req.params.id);
-    console.log(contents);
+	console.log(contents);
 	for (const content of contents) {
 		contentHTML += templates.renderContent(content);
 	}
@@ -38,19 +57,33 @@ router.get("/documentation/:id", async (req, res) => {
 	res.render("index", { contentHTML, navItems });
 });
 
+
+
+
 //Create
 router.get("/create", async (req, res) => {});
 
-router.post("/store", async (req, res) => {
+let data = [];
+const numOfObjects = 20; //Defindes how many picture can be on one webstite
 
-//delete and then store
-console.log(req.body);
-for (const iterator in req.body) {
-	
-	console.log(iterator);
+for (let i = 1; i <= numOfObjects; i++) {
+	data.push({ name: `images_${i}`, maxCount: 4 });
 }
 
+router.post("/store", upload.fields(data), async (req, res) => {
+	//delete and then store
+
+	const imagesData = req.files;
+
+	const time = new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_");
+
+	console.log(req.body);
 });
+
+
+
+
+
 
 //Update
 router.get("/edit/:id", async (req, res) => {

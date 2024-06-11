@@ -31,10 +31,10 @@
         </nav>
         <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
             <div class="content pb-5">
-                <form action="/store" method="post" id="storeForm">
+                <form action="/store" method="post" id="storeForm" enctype="multipart/form-data">
                     <!-- title big -->
                     <div class="element-container">
-                        <input type="text" class="title-big doc-input" placeholder="Title big" name="title-big">
+                        <input type="text" class="title-big doc-input" placeholder="Title big" name="title_big">
                         <div class="d-flex justify-content-center align-items-center btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                         </div>
@@ -43,7 +43,7 @@
                     <!-- title medium -->
                     <div class="element-container">
                         <input type="text" class="title-medium doc-input" placeholder="Title medium"
-                            name="title-medium">
+                            name="title_medium">
                         <div class="d-flex justify-content-center align-items-center btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                         </div>
@@ -53,7 +53,7 @@
                     <!-- text regular -->
                     <div class="element-container">
                         <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-                        <input type="hidden" name="text-regular">
+                        <input type="hidden" name="text_regular" class="doc-input">
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                         </div>
@@ -67,7 +67,7 @@
                                 <li></li>
                                 <li></li>
                             </ul>
-                            <input type="text" name="uList" class="d-none">
+                            <input type="text" name="uList" class="d-none doc-input">
                         </div>
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
@@ -81,7 +81,7 @@
                                 <li></li>
                                 <li></li>
                             </ol>
-                            <input type="text" name="oList" class="d-none">
+                            <input type="text" name="oList" class="d-none doc-input">
                         </div>
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
@@ -92,7 +92,7 @@
                     <!-- youtube video -->
                     <div class="element-container">
                         <div class="w-100 h-100">
-                            <input type="text" class="doc-input video-input" placeholder="Youtube Url">
+                            <input type="text" class="doc-input video-input" placeholder="Youtube Url" name="video">
                             <iframe src="" class="" frameborder="0"></iframe>
                         </div>
                         <div class="d-felx justify-content-center align-items-center btnDelete">
@@ -104,7 +104,9 @@
                     <!-- image -->
                     <div class="element-container">
                         <div>
-                            <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url">
+                            <input type="text" name="image_name" class="d-none doc-input">
+                            <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url"
+                                name="images">
                             <img class="w-100 zoomable" alt="">
                         </div>
                         <div class="d-felx justify-content-center align-items-center btnDelete">
@@ -132,141 +134,7 @@
 
 
     </div>
-
-
-
-
-    <script>
-
-        document.addEventListener('keydown', () => {
-            // Make the text bold if user presses the SHIFT button and if there is something highlighted
-            if (event.keyCode == 16 && window.getSelection().toString() != "") {
-                document.execCommand("bold");
-            }
-        })
-
-
-
-
-
-
-        //Uploaded Image preview
-        let fileInputs = document.getElementsByClassName("file-input");
-        for (let fileInput of fileInputs) {
-            fileInput.addEventListener("change", function () {
-                const preview = event.target.nextElementSibling;
-                const file = fileInput.files[0];
-                let reader = new FileReader();
-
-                reader.onloadend = function () {
-                    preview.src = reader.result;
-                }
-
-                if (file) {
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.src = "";
-                }
-            });
-        }
-
-
-        //Image zooming window
-        const images = document.getElementsByClassName('zoomable');
-        const preview_div = document.getElementById("div-preview");
-        const preview_image = document.getElementById("preview-image");
-        for (const image of images) {
-            image.addEventListener("click", () => {
-                preview_image.src = event.target.src;
-                preview_div.classList.remove("d-none");
-            })
-        }
-        //Close the zoomed window
-        function closePreview(preview) {
-            preview.classList.add("d-none")
-        }
-
-        //Delete element function
-        function deleteElement(button) {
-            button.parentElement.parentElement.remove();
-        }
-
-
-        //Convert youtube links to enmbed link 
-        let videos = document.getElementsByClassName("video-input");
-        for (let video of videos) {
-            video.addEventListener("change", () => {
-                const inputValue = event.target.value;
-                const iframe = event.target.nextElementSibling;
-                let link;
-                if (inputValue.includes("https://youtu.be/"))
-                    link = inputValue.replace("https://youtu.be/", "");
-
-                if (inputValue.includes("https://www.youtube.com/watch?v="))
-                    link = inputValue.replace("https://www.youtube.com/watch?v=", "");
-
-                iframe.src = "https://www.youtube.com/embed/" + link;
-            });
-        }
-
-
-        //Div act like an input, placeholder for div 
-        let divs = document.getElementsByClassName("div-input");
-        for (let div of divs) {
-            div.addEventListener("focus", () => {
-                if (div.textContent == "Text") div.innerHTML = "";
-            });
-
-            div.addEventListener("focusout", () => {
-                if (div.textContent == "") div.innerHTML = "Text";
-            });
-        }
-
-        //Filling the hidden input with the editable div's content 
-        function divContentToInput(div) {
-            if (div.innerHTML != "Text") {
-                const input = div.nextElementSibling;
-                input.value = div.innerHTML;
-            }
-        }
-
-        //Convert 'ol' or 'ul' list content to string format devided by ';'
-        let lists = document.getElementsByClassName("list-input");
-        function listContentToInput(list) {
-            const input = list.nextElementSibling;
-            const list_content = list.children;
-
-            if (list.innerHTML == "") {
-                return;
-            }
-
-            for (const li of list_content) {
-                if (li.textContent != "")
-                    input.value += li.innerHTML + ";";
-            }
-        }
-
-        //Filling the hidden inputs before submit
-        document.getElementById('storeForm').onsubmit = (event) => {
-            for (const div of divs)
-                divContentToInput(div);
-            for (const list of lists) {
-                listContentToInput(list)
-            }
-
-            event.preventDefault();
-        }
-
-
-
-    </script>
-
-
-
-
-
-
-
+    <script src="/public/js/doc.js"></script>
 
 
 </body>
