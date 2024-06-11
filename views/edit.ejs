@@ -30,45 +30,68 @@
             <%- navItems%>
         </nav>
         <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
-            <div class="content">
+            <div class="content pb-5">
                 <form action="/store" method="post" id="storeForm">
-
-                    <input type="text" class="title-big doc-input" placeholder="Title big" name="title-big"
-                        id="title-big">
-
-                    <input type="text" class="title-medium doc-input" placeholder="Title medium" name="title-big"
-                        id="title-big">
-
-                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-                    <input type="hidden" name="first">
-
-                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-                    <input type="hidden" name="second">
-
-                    <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-                    <input type="hidden" name="first">
-
-
-
-                    <div class="">
-                        <input type="text" class="doc-input video-input" placeholder="Youtube Url">
-                        <iframe src="" class="" frameborder="0"></iframe>
+                    <!-- title big -->
+                    <div class="element-container">
+                        <input type="text" class="title-big doc-input" placeholder="Title big" name="title-big">
+                        <div class="d-flex justify-content-center align-items-center btnDelete">
+                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                        </div>
                     </div>
+
+                    <!-- title medium -->
+                    <div class="element-container">
+                        <input type="text" class="title-medium doc-input" placeholder="Title medium"
+                            name="title-medium">
+                        <div class="d-flex justify-content-center align-items-center btnDelete">
+                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                        </div>
+                    </div>
+
+
+                    <!-- text regular -->
+                    <div class="element-container">
+                        <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
+                        <input type="hidden" name="text-regular">
+                        <div class="btnDelete">
+                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                        </div>
+                    </div>
+
+                    <!-- youtube video -->
+                    <div class="element-container">
+                        <div class="w-100 h-100">
+                            <input type="text" class="doc-input video-input" placeholder="Youtube Url">
+                            <iframe src="" class="" frameborder="0"></iframe>
+                        </div>
+                        <div class="d-felx justify-content-center align-items-center btnDelete">
+                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                        </div>
+                    </div>
+
+
+                    <!-- image -->
+                    <div class="element-container">
+                        <div>
+                            <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url">
+                            <img class="w-100 zoomable" alt="">
+                        </div>
+                        <div class="d-felx justify-content-center align-items-center btnDelete">
+                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                        </div>
+                    </div>
+
 
                     <button type="submit" class="btn btn-success">Save</button>
                 </form>
 
-                <!-- image -->
-                <div class="mb-5">
-                    <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url">
-                    <img class="w-100 zoomable" alt="">
-                </div>
 
+                 <!-- MUlti Image Later -->
                 <input type="file" class="doc-input file-input d-none" accept="image/*" placeholder="Youtube Url">
                 <div class="mb-5 image-grid">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png" onclick="zoomImage(this)">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg"
-                        onclick="zoomImage(this)">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png">
+                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg">
                     <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png">
                     <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg">
                 </div>
@@ -127,6 +150,9 @@
             preview.classList.add("d-none")
         }
 
+        function deleteElement(button) {
+            button.parentElement.parentElement.remove();
+        }
 
 
         //Convert youtube links to enmbed link 
