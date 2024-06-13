@@ -162,7 +162,7 @@ iframe {
 .content-img {
 	width: 100%;
 }
-.content-ol {
+.content-ol, .content-ul {
 	padding-left: 70px;
 }
 

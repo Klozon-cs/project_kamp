@@ -7,9 +7,6 @@ document.addEventListener('keydown', () => {
 
 
 
-
-
-
 //Uploaded Image preview
 let fileInputs = document.getElementsByClassName("file-input");
 for (let fileInput of fileInputs) {
@@ -46,6 +43,7 @@ function closePreview(preview) {
     preview.classList.add("d-none")
 }
 
+
 //Delete element function
 function deleteElement(button) {
     button.parentElement.parentElement.remove();
@@ -66,11 +64,12 @@ for (let video of videos) {
             link = inputValue.replace("https://www.youtube.com/watch?v=", "");
 
         iframe.src = "https://www.youtube.com/embed/" + link;
+        event.target.value = "https://www.youtube.com/embed/" + link;
     });
 }
 
 
-//Div act like an input, placeholder for div 
+//Placeholder for div inputs
 let divs = document.getElementsByClassName("div-input");
 for (let div of divs) {
     div.addEventListener("focus", () => {
@@ -84,6 +83,7 @@ for (let div of divs) {
 
 //Filling the hidden input with the editable div's content 
 function divContentToInput(div) {
+    //Checking if there any content in the div or just the placeholder
     if (div.innerHTML != "Text") {
         const input = div.nextElementSibling;
         input.value = div.innerHTML;
@@ -102,6 +102,7 @@ function listContentToInput(list) {
 
     for (const li of list_content) {
         if (li.textContent != "")
+            //deviding with ';'
             input.value += li.innerHTML + ";";
     }
 }
@@ -111,7 +112,8 @@ for (const file_input of fileInputs) {
         // Get the selected file
         const input = file_input.previousElementSibling;
         // If a file is selected, update the text input with the file name
-        let name = file_input.files[0].name;
+        let name = 	new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_") +
+        "_" +file_input.files[0].name;
 
         input.value = name;
     });

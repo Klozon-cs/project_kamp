@@ -5,6 +5,7 @@ const con = mysql.createPool({
 	user: "root",
 	password: "",
 	database: "documentation",
+	charset: "utf8mb4"
 });
 
 

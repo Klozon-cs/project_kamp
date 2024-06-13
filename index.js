@@ -20,7 +20,7 @@ app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'))
 app.use('/views', express.static('./views'))
 app.use('/public', express.static('./public'))
 
-const route = require('./Routes/documentation');
+const route = require('./Routes/doc-route');
 const { AsyncLocalStorage } = require('async_hooks');
 
 app.use('/', route);

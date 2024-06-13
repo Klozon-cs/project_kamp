@@ -8,16 +8,12 @@ const path = require("path");
 // Set up multer to handle multiple file uploads
 const destination = path.resolve(__dirname, "..") + "/public/uploads";
 const storage = multer.diskStorage({
+	
 	destination: function (req, file, cb) {
 		cb(null, destination);
 	},
 	filename: function (req, file, cb) {
-		cb(
-			null,
-			new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_") +
-				"_" +
-				file.originalname
-		);
+		cb(	null, file.originalname);
 	},
 });
 const upload = multer({ storage: storage });
@@ -57,9 +53,6 @@ router.get("/documentation/:id", async (req, res) => {
 	res.render("index", { contentHTML, navItems });
 });
 
-
-
-
 //Create
 router.get("/create", async (req, res) => {});
 
@@ -70,20 +63,27 @@ for (let i = 1; i <= numOfObjects; i++) {
 	data.push({ name: `images_${i}`, maxCount: 4 });
 }
 
-router.post("/store", upload.fields(data), async (req, res) => {
+router.post("/store/:chapter_id", upload.fields(data), async (req, res) => {
 	//delete and then store
+	// await db.deleteMany("contents","chapter_id",req.params.chapter_id);
+
+	let i =0;
+	for (const iterator in req.body) {
+	
+			let a= await db.insertMany("contents", [
+				{
+					chapter_id : 4,
+					content: req.body[iterator],
+					position: i,
+					type_id: nameToTypeId(iterator)
+				},
+			]);
+		
+		i++;
+	}
 
 	const imagesData = req.files;
-
-	const time = new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_");
-
-	console.log(req.body);
 });
-
-
-
-
-
 
 //Update
 router.get("/edit/:id", async (req, res) => {
@@ -110,3 +110,29 @@ router.post("/update", async (req, res) => {});
 router.post("/delete", async (req, res) => {});
 
 module.exports = router;
+
+function nameToTypeId(name) {
+	if (name.includes("title_big")) {
+		return 1;
+	} else if (name.includes("title_medium")) {
+		return 2;
+	} else if (name.includes("uList")) {
+		return 3;
+	} else if (name.includes("oList")) {
+		return 4;
+	} else if (name.includes("text_regular")) {
+		return 5;
+	} else if (name.includes("video")) {
+		return 6;
+	} else if (name.includes("image_name")) {
+		return 7;
+	}
+}
+
+// 1 => titleBig
+// 2 => titleMedium
+// 3 => listUnordered
+// 4 => listOrdered
+// 5 => textregular
+// 6 => youtubeVideo
+// 7 => image

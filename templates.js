@@ -11,48 +11,46 @@
 
 
 
-function titleBig(id, content) {
-	return `<h1 class="title-big" id="${id}">${content}</h1>`;
+function titleBig(content) {
+	return `<h1 class="title-big">${content}</h1>`;
 }
 
-function titleMedium(id, content) {
-	return `<h3 class="title-medium" id="${id}">${content}</h3>`;
+function titleMedium(content) {
+	return `<h3 class="title-medium">${content}</h3>`;
 }
 
-function listUnordered(id, contentString) {
-	const items = contentString.split(";");
-
-	let list = `<ul id="${id}">`;
-	for (const item of items) {
-		list += `<li>${item}</li>`;
-	}
-	list += "</ul>";
-	return list;
-}
-
-function listOrdered(id, contentString) {
+function listUnordered(contentString) {
 	const items = contentString.split(";");
 	let list = ``;
 	for (const item of items) {
 		list += `<li>${item}</li>`;
 	}
-	return `<ol class="content-ol" id="${id}">${list}</ol>` 
+	return `<ul class="content-ul">${list}</ul>`; 
 }
 
-function textRegular(id, content) {
-	return `<p class="text-regular" id="${id}">${content}</p>`;
+function listOrdered(contentString) {
+	const items = contentString.split(";");
+	let list = ``;
+	for (const item of items) {
+		list += `<li>${item}</li>`;
+	}
+	return `<ol class="content-ol">${list}</ol>`;
 }
 
-function youtubeVideo(id, link) {
+function textRegular(content) {
+	return `<p class="text-regular" >${content}</p>`;
+}
+
+function youtubeVideo(link) {
 	return ` 
-    <iframe id="${id}" width="560" height="315" src="${link.replace("https://youtu.be/","https://www.youtube.com/embed/")}"
+    <iframe width="560" height="315" src="${link}")}"
                     title="YouTube video player" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
 }
 
-function image(id, path){
-    return `<img class="content-img" src="/public/img/unnamed.jpg" alt="">`
+function image(name){
+    return `<img class="content-img" src="/public/uploads/${name}" alt="">`
 }
 
 function navItem(id,topic,subchapters){
@@ -73,29 +71,29 @@ function navItem(id,topic,subchapters){
     return navitem;
 }
 
-function renderContent(content){
+function renderContent(page_element){
     let render;
-    switch (content.type_id) {
+    switch (page_element.type_id) {
         case 1:
-            render = titleBig(content.id, content.content);
+            render = titleBig(page_element.content);
             break;
         case 2:
-            render = titleMedium(content.id, content.content);
+            render = titleMedium(page_element.content);
             break;
         case 3:
-            render = listUnordered(content.id, content.content);
+            render = listUnordered(page_element.content);
             break;
         case 4:
-            render = listOrdered(content.id, content.content);
+            render = listOrdered(page_element.content);
             break;
         case 5:
-            render = textRegular(content.id, content.content);
+            render = textRegular(page_element.content);
             break;
         case 6:
-            render = youtubeVideo(content.id, content.content);
+            render = youtubeVideo(page_element.content);
             break;
         case 7:
-            render = image(content.id, content.content);
+            render = image(page_element.content);
             break;
     }
     return render;
