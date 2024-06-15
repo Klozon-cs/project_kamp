@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database");
-const templates = require("../templates");
+const templates = require("../public/js/templates");
 const multer = require("multer");
 const path = require("path");
 
@@ -44,7 +44,7 @@ router.get("/documentation/:id", async (req, res) => {
 		navItems += templates.navItem(topic.id, topic.name, chapters);
 	}
 
-	let contents = await db.getMany("contents", "chapter_id", req.params.id);
+	let contents = await db.getMany("pages", "chapter_id", req.params.id);
 	console.log(contents);
 	for (const content of contents) {
 		contentHTML += templates.renderContent(content);
@@ -65,14 +65,14 @@ for (let i = 1; i <= numOfObjects; i++) {
 
 router.post("/store/:chapter_id", upload.fields(data), async (req, res) => {
 	//delete and then store
-	// await db.deleteMany("contents","chapter_id",req.params.chapter_id);
+	await db.deleteMany("pages","chapter_id",req.params.chapter_id);
 
 	let i =0;
 	for (const iterator in req.body) {
 	
-			let a= await db.insertMany("contents", [
+			await db.insertMany("pages", [
 				{
-					chapter_id : 4,
+					chapter_id : req.params.chapter_id,
 					content: req.body[iterator],
 					position: i,
 					type_id: nameToTypeId(iterator)
@@ -96,12 +96,13 @@ router.get("/edit/:id", async (req, res) => {
 		navItems += templates.navItem(topic.id, topic.name, chapters);
 	}
 
-	let contents = await db.getMany("contents", "chapter_id", req.params.id);
-	for (const content of contents) {
-		contentHTML += templates.renderContent(content);
+	let page_contents = await db.getMany("pages", "chapter_id", req.params.id);
+	for (const content of page_contents) {
+		contentHTML += templates.renderInput(content);
 	}
+	console.log(req.body);
 
-	res.render("edit", { contentHTML, navItems });
+	res.render("edit", { contentHTML, navItems , id: req.params.id});
 });
 
 router.post("/update", async (req, res) => {});

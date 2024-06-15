@@ -7,12 +7,14 @@
     <title>Academy</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/css/app.css">
+    <link rel="stylesheet" href="/public/css/dragging.css">
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
-    <div class="w-100 d-flex header">
+
+    <div class="header">
         <div>
             <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
         </div>
@@ -21,122 +23,118 @@
             <a href="http://" class="btn--">Research</a>
         </div>
     </div>
-    <div class="d-flex w-100 h-100">
-        <div class="d-flex justify-content-center align-items-center d-none" id="div-preview"
-            onclick="closePreview(this)">
-            <img src="" alt="" id="preview-image">
-        </div>
+    <div id="bottom">
         <nav>
             <%- navItems%>
         </nav>
-        <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
+        <div class="d-flex justify-content-center w-100 pt-5" style="max-height: 100%; overflow: scroll;">
             <div class="content pb-5">
-                <form action="/store/2" method="post" id="storeForm" enctype="multipart/form-data">
-                    <!-- title big -->
-                    <div class="element-container">
-                        <input type="text" class="title-big doc-input" placeholder="Title big" name="title_big">
-                        <div class="d-flex justify-content-center align-items-center btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
+                <form action="/store/<%- id %>" method="post" id="storeForm" enctype="multipart/form-data">
+                    <%- contentHTML %>
 
-                    <!-- title medium -->
-                    <div class="element-container">
-                        <input type="text" class="title-medium doc-input" placeholder="Title medium"
-                            name="title_medium">
-                        <div class="d-flex justify-content-center align-items-center btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-
-                    <!-- text regular -->
-                    <div class="element-container">
-                        <div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-                        <input type="hidden" name="text_regular" class="doc-input">
-                        <div class="btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-                    <div class="element-container">
-                        <div class="w-100">
-
-                            <ul contenteditable="true" class="list-input">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ul>
-                            <input type="text" name="uList" class="d-none doc-input">
-                        </div>
-                        <div class="btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-                    <div class="element-container">
-                        <div class="w-100">
-                            <ol contenteditable="true" class="list-input">
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ol>
-                            <input type="text" name="oList" class="d-none doc-input">
-                        </div>
-                        <div class="btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-
-                    <!-- youtube video -->
-                    <div class="element-container">
-                        <div class="w-100 h-100">
-                            <input type="text" class="doc-input video-input" placeholder="Youtube Url" name="video">
-                            <iframe src="" class="" frameborder="0"></iframe>
-                        </div>
-                        <div class="d-felx justify-content-center align-items-center btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-
-                    <!-- image -->
-                    <div class="element-container">
-                        <div>
-                            <input type="text" name="image_name" class="d-none doc-input">
-                            <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url"
-                                name="images">
-                            <img class="w-100 zoomable" alt="">
-                        </div>
-                        <div class="d-felx justify-content-center align-items-center btnDelete">
-                            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                        </div>
-                    </div>
-
-
-                    <button type="submit" class="btn btn-success">Save</button>
                 </form>
-
-
-                <!-- MUlti Image Later -->
-                <!-- <input type="file" class="doc-input file-input d-none" accept="image/*" placeholder="Youtube Url">
-                <div class="mb-5 image-grid">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/logo.png">
-                    <img class="image-grid-item zoomable" alt="" src="/public/img/unnamed.jpg">
-                </div> -->
-
-
+                <button type="submit" class="btn btn-success mb-5" for="storeForm">Save</button>
             </div>
-        </main>
-
-
+        </div>
+        <div class="options-menu">
+            <div class="option" id="6">
+                <i class="fa-brands fa-youtube"></i>
+                <div>Video</div>
+            </div>
+        </div>
     </div>
-    <script src="/public/js/doc.js"></script>
 
 
 </body>
+<script src="/public/js/doc.js"></script>
+
+<script>
+import templates from '/public/js/templates.js'
+
+
+const sortableList = document.getElementById('storeForm');
+let list_items = sortableList.querySelectorAll(".draggable");
+let type = false; //false = list item, true = option item
+
+for (const item of list_items) {
+    dragState(item, false)
+}
+
+const options = document.getElementsByClassName('option');
+
+for (const option of options) {
+    dragState(option, true)
+}
+
+
+let nextSibling;
+let newNode;
+const initSortableList = (e) => {
+    e.preventDefault();
+    const draggingItem = document.querySelector(".dragging");
+    // Getting all items except currently dragging and making array of them
+    let siblings = [...document.querySelectorAll(".draggable:not(.dragging)")];
+
+    // Finding the sibling after which the dragging item should be placed
+    nextSibling = siblings.find(sibling => {
+        //const xCondition = e.clientX <= sibling.offsetLeft + sibling.offsetWidth / 1.5;
+        const yCondition = e.clientY <= sibling.offsetTop + sibling.offsetHeight / 1.5;
+
+        // return xCondition && yCondition;
+        return yCondition;
+    });
+
+    if (type) {
+        const parser = new DOMParser();
+
+        //SOLVING THIS FUCKER !!!!!!!!
+        const doc = parser.parseFromString(templates.renderInput({type_id:draggingItem.id}), 'text/html');
+
+        // Extract the first element
+        newNode = doc.body.firstElementChild;
+
+        dragState(newNode, false);
+
+        sortableList.addEventListener("drop", () => {
+            sortableList.insertBefore(newNode, nextSibling);
+        });
+    } else {
+        sortableList.insertBefore(draggingItem, nextSibling);
+    }
+}
+sortableList.addEventListener("dragover", initSortableList);
+sortableList.addEventListener("dragenter", e => e.preventDefault());
+
+
+function textRegularInput(content = "Text") {
+    return `   <div class="element-container draggable">
+                    <div contenteditable="true" class="doc-input div-input">${content}</div>
+                    <input type="hidden" name="text_regular" class="doc-input" >
+                    <div class="btnDelete">
+                        <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+                    </div>
+            </div>`;
+}
+
+
+function dragState(node, node_type) {
+    node.draggable = "true";
+
+    node.addEventListener("dragstart", () => {
+        // Adding dragging class to item after a delay
+        setTimeout(() => node.classList.add("dragging"), 0);
+        type = node_type;
+    });
+
+    // Removing dragging class from item on dragend event
+    node.addEventListener("dragend", () => {
+        node.classList.remove("dragging")
+        type = !node_type;
+    });
+}
+
+
+
+</script>
 
 </html>

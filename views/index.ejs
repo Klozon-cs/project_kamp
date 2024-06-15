@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
-<body onkeydown="myFunction(event)">
+<body>
+
     <div class="header">
         <div>
             <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
@@ -21,7 +22,7 @@
             <a href="http://" class="btn--">Research</a>
         </div>
     </div>
-    <div class="d-flex w-100 h-100">
+    <div id="bottom">
         <nav>
             <%- navItems%>
                 <!-- <section>
@@ -59,17 +60,19 @@
                 </div>
             </section> -->
         </nav>
-        <main class=" d-flex justify-content-center w-100 pt-5 pb-5" style="max-height: 100vh; overflow: scroll;">
-            <div class="content" contenteditable="false">
+        <div class="d-flex justify-content-center w-100 pt-5" style="max-height: 100%; overflow: scroll;">
+            <div class="content pb-5">
 
                 <%- contentHTML %>
 
 
             </div>
-        </main>
+        </div>
 
 
     </div>
+
+
 </body>
 
 </html>
