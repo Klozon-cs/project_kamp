@@ -21,9 +21,11 @@ function titleMedium(content) {
 
 function listUnordered(contentString) {
 	const items = contentString.split(";");
+
 	let list = ``;
 	for (const item of items) {
-		list += `<li>${item}</li>`;
+        if(item != "" && item != "<br>")
+            list += `<li>${item}</li>`;
 	}
 	return `<ul class="content-ul">${list}</ul>`; 
 }
@@ -32,7 +34,8 @@ function listOrdered(contentString) {
 	const items = contentString.split(";");
 	let list = ``;
 	for (const item of items) {
-		list += `<li>${item}</li>`;
+		if(item != "" && item != "<br>")
+            list += `<li>${item}</li>`;
 	}
 	return `<ol class="content-ol">${list}</ol>`;
 }
@@ -43,29 +46,43 @@ function textRegular(content) {
 
 function youtubeVideo(link) {
 	return ` 
-    <iframe width="560" height="315" src="${link}")}"
+    <iframe class="mb-3 mt-3" width="560" height="315" src="${link}")}"
                     title="YouTube video player" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
 }
 
 function image(name){
-    return `<img class="content-img" src="/public/uploads/${name}" alt="">`
+    return `<img class="content-img" src="/public/uploads/${name}" alt="" onclick="onclickZoomImage(this)">`
 }
 
 function navItem(id,topic,subchapters){
     let chapters = ""
     for (const chapter of subchapters) {        
-        chapters +=`<a href="/documentation/${chapter.id}" class="nav-link">${chapter.name}</a>`
+        chapters +=
+        `<div class="d-flex w-100">
+                <a href="/documentation/${chapter.id}" class="nav-link w-100">${chapter.name}</a>
+                <input type="hidden" name="${id}" value="${chapter.id}">
+                <div class="d-felx justify-content-center align-items-center btnDelete">
+                    <i class="fa-solid fa-xmark fs-6 cursor-pointer" onclick="deleteElement(this)"></i>
+                </div>
+        </div>`
     }
     let navitem = 
     `<section>
         <input type="checkbox" name="checkbox" class="toogle" id="topic-${id}">
+
         <label for="topic-${id}">${topic}
             <i class="fa-solid fa-angle-right"></i>
         </label>
         <div class="toogle-div">
+            <form action="/create/chapter/${id}" method="post" id="topicForm_id">
+
             ${chapters}
+            <div class="nav-link d-flex justify-content-between" id="${id}">
+                <i class="fa-solid fa-plus cursor-pointer" onclick="addChapter(this)"></i>  <button type="submit" form="topicForm_id" class="btn--save">Save</button>
+            </div>
+            </form>
         </div>
     </section>`
     return navitem;
@@ -106,10 +123,9 @@ function renderContent(page_element){
 
 
 
-
 function titleBigInput(content = "") {
-	return `       <div class="element-container draggable">
-                        <input type="text" class="title-big doc-input" placeholder="Title big" name="title_big" value="${content}">
+    return `       <div class="element-container draggable gap-big">
+                        <input type="text" class="title-big-input doc-input" placeholder="Title big" name="title_big" value="${content}">
                         <div class="d-flex justify-content-center align-items-center btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                         </div>
@@ -117,8 +133,8 @@ function titleBigInput(content = "") {
 }
 
 function titleMediumInput(content = "") {
-	return `   <div class="element-container draggable">
-                        <input type="text" class="title-medium doc-input" placeholder="Title medium" name="title_medium" value="${content}">
+    return `   <div class="element-container draggable gap-medium">
+                        <input type="text" class="title-medium-input doc-input m-0" placeholder="Title medium" name="title_medium" value="${content}">
                         <div class="d-flex justify-content-center align-items-center btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                         </div>
@@ -127,8 +143,8 @@ function titleMediumInput(content = "") {
 
 
 function textRegularInput(content = "Text") {
-	return `   <div class="element-container draggable">
-                        <div contenteditable="true" class="text-regular doc-input div-input">${content}</div>
+    return `   <div class="element-container draggable gap-small">
+                        <div contenteditable="true" class="doc-input div-input" onfocus="divPlaceholder(this)">${content}</div>
                         <input type="hidden" name="text_regular" class="doc-input" >
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
@@ -136,16 +152,16 @@ function textRegularInput(content = "Text") {
                 </div>`;
 }
 
-function listUnorderedInput(contentString) {
-	const items = contentString.split(";");
-	let list = ``;
+function listUnorderedInput(contentString = "") {
+    const items = contentString.split(";");
+    let list = ``;
 
-	for (const item of items) 
-		list += `<li>${item}</li>`;
-	
-    if(contentString == "") list = "<li></li><li></li><li></li>";
+    for (const item of items)
+        list += `<li>${item}</li>`;
 
-	return `<div class="element-container draggable" >
+    if (contentString == "") list = "<li></li><li></li><li></li>";
+
+    return `<div class="element-container draggable  gap-small" >
                     <div class="w-100">
                         <ul contenteditable="true" class="list-input">
                             ${list}
@@ -155,19 +171,19 @@ function listUnorderedInput(contentString) {
                     <div class="btnDelete">
                         <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                     </div>
-            </div>`; 
+            </div>`;
 }
 
 function listOrderedInput(contentString = "") {
-	const items = contentString.split(";");
-	let list;
+    const items = contentString.split(";");
+    let list;
 
-	for (const item of items)
-		list += `<li>${item}</li>`;
+    for (const item of items)
+        list += `<li>${item}</li>`;
 
-    if(contentString == "") list = "<li></li><li></li><li></li>";
+    if (contentString == "") list = "<li></li><li></li><li></li>";
 
-	return `  <div class="element-container draggable">
+    return `  <div class="element-container draggable gap-small">
                     <div class="w-100">
                         <ol contenteditable="true" class="list-input">
                             ${list}
@@ -181,34 +197,31 @@ function listOrderedInput(contentString = "") {
 }
 
 
-
 function youtubeVideoInput(link = "") {
-	return ` 
-            <div class="element-container draggable">
-                <div class="w-100 h-100">
-                    <input type="text" class="doc-input video-input" placeholder="Youtube Url" name="video" value="${link}">
-                    <iframe src="${link}" class="" frameborder="0"></iframe>
-                </div>
-                <div class="d-felx justify-content-center align-items-center btnDelete">
-                    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                </div>
-            </div>`;
+    return ` 
+    <div class="element-container draggable gap-medium">
+        <div class="w-100 h-100">
+            <input type="text" class="doc-input video-input" placeholder="Youtube Url" name="video" value="${link}" onchange="onchangeLinkToEmbed(this)">
+            <iframe src="${link}" class="" frameborder="0"></iframe>
+        </div>
+        <div class="d-felx justify-content-center align-items-center btnDelete">
+            <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
+        </div>
+    </div>`;
 }
 
-function imageInput(path = ""){
-    return `<div class="element-container draggable">
+function imageInput(path = "") {
+    return `<div class="element-container draggable gap-medium">
                 <div>
-                    <input type="text" name="image_name" class="d-none doc-input">
-                    <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url" name="images">
-                    <img class="w-100 zoomable" alt="" src="${path}">
+                    <input type="text" name="image_name" class="d-none doc-input" value="${path}">
+                    <input type="file" class="doc-input file-input" accept="image/*" name="images" onchange="onchangePreview(this)" >
+                    <img class="w-100 zoomable" alt="" src="/public/uploads/${path}" onclick="onclickZoomImage(this)">
                 </div>
                 <div class="d-felx justify-content-center align-items-center btnDelete">
                     <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
                 </div>
             </div>`;
 }
-
-
 
 function renderInput(page_element){
     let render;
@@ -240,119 +253,11 @@ function renderInput(page_element){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 module.exports ={
-    titleBig: titleBig,
-    titleMedium: titleMedium,
-    listUnordered: listUnordered,
-    listOrdered: listOrdered,
-    textRegular: textRegular,
-    youtubeVideo: youtubeVideo,
-    image: image,
-    navItem: navItem,
-    renderContent: renderContent,
-    titleBigInput: titleBigInput,
-    titleMediumInput: titleMediumInput,
-    listUnorderedInput:listUnorderedInput,
-    listOrderedInput:listOrderedInput,
-    textRegularInput: textRegularInput,
-    youtubeVideoInput:youtubeVideoInput,
-    imageInput: imageInput,
-    renderInput:renderInput
+    navItem,
+    renderContent,
+    renderInput
 };
-
-
-/* <div class="element-container">
-<input type="text" class="title-big doc-input" placeholder="Title big" name="title_big">
-<div class="d-flex justify-content-center align-items-center btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-title medium 
-<div class="element-container">
-<input type="text" class="title-medium doc-input" placeholder="Title medium"
-    name="title_medium">
-<div class="d-flex justify-content-center align-items-center btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-
-text regular 
-<div class="element-container">
-<div contenteditable="true" class="text-regular doc-input div-input">Text</div>
-<input type="hidden" name="text_regular" class="doc-input">
-<div class="btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-<div class="element-container">
-<div class="w-100">
-
-    <ul contenteditable="true" class="list-input">
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
-    <input type="text" name="uList" class="d-none doc-input">
-</div>
-<div class="btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-<div class="element-container">
-<div class="w-100">
-    <ol contenteditable="true" class="list-input">
-        <li></li>
-        <li></li>
-        <li></li>
-    </ol>
-    <input type="text" name="oList" class="d-none doc-input">
-</div>
-<div class="btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-
-youtube video 
-<div class="element-container">
-<div class="w-100 h-100">
-    <input type="text" class="doc-input video-input" placeholder="Youtube Url" name="video">
-    <iframe src="" class="" frameborder="0"></iframe>
-</div>
-<div class="d-felx justify-content-center align-items-center btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div>
-
-
-image 
-<div class="element-container">
-<div>
-    <input type="text" name="image_name" class="d-none doc-input">
-    <input type="file" class="doc-input file-input" accept="image/*" placeholder="Youtube Url"
-        name="images">
-    <img class="w-100 zoomable" alt="">
-</div>
-<div class="d-felx justify-content-center align-items-center btnDelete">
-    <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-</div>
-</div> */
-
 
 // <!-- MUlti Image Later -->
 // <!-- <input type="file" class="doc-input file-input d-none" accept="image/*" placeholder="Youtube Url">

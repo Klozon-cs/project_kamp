@@ -34,6 +34,11 @@ router.get("/", async (req, res) => {
 	res.render("index", { contentHTML, navItems });
 });
 
+
+
+
+
+
 router.get("/documentation/:id", async (req, res) => {
 	let contentHTML = "";
 	let navItems = "";
@@ -44,17 +49,50 @@ router.get("/documentation/:id", async (req, res) => {
 		navItems += templates.navItem(topic.id, topic.name, chapters);
 	}
 
-	let contents = await db.getMany("pages", "chapter_id", req.params.id);
-	console.log(contents);
-	for (const content of contents) {
+	let page = await db.getMany("pages", "chapter_id", req.params.id);
+
+	for (const content of page) {
 		contentHTML += templates.renderContent(content);
 	}
 
 	res.render("index", { contentHTML, navItems });
 });
 
+
+
+
+
+
 //Create
-router.get("/create", async (req, res) => {});
+router.post("/create/chapter/:topic_id", async (req, res) => {
+	let old_chapters = await db.getMany("subchapters","topic_id", req.params.topic_id);
+
+	
+	
+	let new_chapters =req.body[req.params.topic_id];
+	for (const old of old_chapters) {
+		let stay = false;
+		for (const newC of new_chapters) {
+			if (old.id == newC) {
+				stay = true;
+			}
+			
+		}
+		if (!stay) {
+			await db.deleteMany("subchapters","id", old.id);	
+			console.log("delete" +old.id);
+		}
+	}
+
+	console.log(new_chapters);
+	console.log(old_chapters);
+
+	
+});
+
+
+
+
 
 let data = [];
 const numOfObjects = 20; //Defindes how many picture can be on one webstite
@@ -65,14 +103,14 @@ for (let i = 1; i <= numOfObjects; i++) {
 
 router.post("/store/:chapter_id", upload.fields(data), async (req, res) => {
 	//delete and then store
-	await db.deleteMany("pages","chapter_id",req.params.chapter_id);
+	await db.deleteMany("pages","chapter_id", req.params.chapter_id);
 
 	let i =0;
 	for (const iterator in req.body) {
 	
 			await db.insertMany("pages", [
-				{
-					chapter_id : req.params.chapter_id,
+				{ 
+					chapter_id : req.params.chapter_id, 
 					content: req.body[iterator],
 					position: i,
 					type_id: nameToTypeId(iterator)
@@ -83,9 +121,16 @@ router.post("/store/:chapter_id", upload.fields(data), async (req, res) => {
 	}
 
 	const imagesData = req.files;
+
+	res.redirect("/documentation/"+req.params.chapter_id);
 });
 
-//Update
+
+
+
+
+
+
 router.get("/edit/:id", async (req, res) => {
 	let contentHTML = "";
 	let navItems = "";
@@ -105,7 +150,6 @@ router.get("/edit/:id", async (req, res) => {
 	res.render("edit", { contentHTML, navItems , id: req.params.id});
 });
 
-router.post("/update", async (req, res) => {});
 
 //Delete
 router.post("/delete", async (req, res) => {});

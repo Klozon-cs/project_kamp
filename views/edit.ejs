@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/css/app.css">
     <link rel="stylesheet" href="/public/css/dragging.css">
+    <link rel="stylesheet" href="/public/css/input.css">
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -24,117 +25,57 @@
         </div>
     </div>
     <div id="bottom">
+        <div class="d-flex justify-content-center align-items-center d-none" id="div-preview"
+            onclick="closePreview(this)">
+            <img src="" alt="" id="preview-image">
+        </div>
         <nav>
             <%- navItems%>
         </nav>
-        <div class="d-flex justify-content-center w-100 pt-5" style="max-height: 100%; overflow: scroll;">
+        <div class="d-flex justify-content-center w-100 pt-3" style="max-height: 100%; overflow: scroll;">
             <div class="content pb-5">
-                <form action="/store/<%- id %>" method="post" id="storeForm" enctype="multipart/form-data">
-                    <%- contentHTML %>
-
+                <form action="/store/<%- id %>" method="post" id="storeForm" class="pt-5" "
+                    enctype="multipart/form-data">
+                    <%- contentHTML%>
+                    <div class="draggable"></div>
                 </form>
-                <button type="submit" class="btn btn-success mb-5" for="storeForm">Save</button>
+                <button type="submit" class="btn btn-success mb-5 mt-5" form="storeForm">Save</button>
             </div>
         </div>
         <div class="options-menu">
+            <div class="option" id="1">
+                <i class="fa-solid fa-heading"></i>
+                <div>Big title</div>
+            </div>
+            <div class="option" id="2">
+                <i class="fa-solid fa-m"></i>
+                <div>Madium title</div>
+            </div>
+            <div class="option" id="5">
+                <i class="fa-solid fa-align-left"></i>
+                <div>Text</div>
+            </div>
+            <div class="option" id="3">
+                <i class="fa-solid fa-list-ul"></i>
+                <div>Unordered List</div>
+            </div>
+            <div class="option" id="4">
+                <i class="fa-solid fa-list-ol"></i>
+                <div>Onordered List</div>
+            </div>
             <div class="option" id="6">
                 <i class="fa-brands fa-youtube"></i>
                 <div>Video</div>
             </div>
+            <div class="option" id="7">
+                <i class="fa-regular fa-image"></i>
+                <div>Image</div>
+            </div>
         </div>
     </div>
 
-
 </body>
 <script src="/public/js/doc.js"></script>
-
-<script>
-import templates from '/public/js/templates.js'
-
-
-const sortableList = document.getElementById('storeForm');
-let list_items = sortableList.querySelectorAll(".draggable");
-let type = false; //false = list item, true = option item
-
-for (const item of list_items) {
-    dragState(item, false)
-}
-
-const options = document.getElementsByClassName('option');
-
-for (const option of options) {
-    dragState(option, true)
-}
-
-
-let nextSibling;
-let newNode;
-const initSortableList = (e) => {
-    e.preventDefault();
-    const draggingItem = document.querySelector(".dragging");
-    // Getting all items except currently dragging and making array of them
-    let siblings = [...document.querySelectorAll(".draggable:not(.dragging)")];
-
-    // Finding the sibling after which the dragging item should be placed
-    nextSibling = siblings.find(sibling => {
-        //const xCondition = e.clientX <= sibling.offsetLeft + sibling.offsetWidth / 1.5;
-        const yCondition = e.clientY <= sibling.offsetTop + sibling.offsetHeight / 1.5;
-
-        // return xCondition && yCondition;
-        return yCondition;
-    });
-
-    if (type) {
-        const parser = new DOMParser();
-
-        //SOLVING THIS FUCKER !!!!!!!!
-        const doc = parser.parseFromString(templates.renderInput({type_id:draggingItem.id}), 'text/html');
-
-        // Extract the first element
-        newNode = doc.body.firstElementChild;
-
-        dragState(newNode, false);
-
-        sortableList.addEventListener("drop", () => {
-            sortableList.insertBefore(newNode, nextSibling);
-        });
-    } else {
-        sortableList.insertBefore(draggingItem, nextSibling);
-    }
-}
-sortableList.addEventListener("dragover", initSortableList);
-sortableList.addEventListener("dragenter", e => e.preventDefault());
-
-
-function textRegularInput(content = "Text") {
-    return `   <div class="element-container draggable">
-                    <div contenteditable="true" class="doc-input div-input">${content}</div>
-                    <input type="hidden" name="text_regular" class="doc-input" >
-                    <div class="btnDelete">
-                        <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
-                    </div>
-            </div>`;
-}
-
-
-function dragState(node, node_type) {
-    node.draggable = "true";
-
-    node.addEventListener("dragstart", () => {
-        // Adding dragging class to item after a delay
-        setTimeout(() => node.classList.add("dragging"), 0);
-        type = node_type;
-    });
-
-    // Removing dragging class from item on dragend event
-    node.addEventListener("dragend", () => {
-        node.classList.remove("dragging")
-        type = !node_type;
-    });
-}
-
-
-
-</script>
+<script src="/public/js/drag.js"></script>
 
 </html>

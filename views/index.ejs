@@ -7,6 +7,8 @@
     <title>Academy</title>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/css/app.css">
+    <link rel="stylesheet" href="/public/css/input.css">
+    <link rel="stylesheet" href="/public/css/dragging.css">
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -23,47 +25,16 @@
         </div>
     </div>
     <div id="bottom">
+        <div class="d-flex justify-content-center align-items-center d-none" id="div-preview"
+            onclick="closePreview(this)">
+            <img src="" alt="" id="preview-image">
+        </div>
         <nav>
             <%- navItems%>
-                <!-- <section>
-                <input type="checkbox" name="checkbox" class="toogle" id="1">
-
-                <label for="1">Section 1
-                    <i class="fa-solid fa-angle-right"></i>
-                </label>
-                <div class="toogle-div">
-                    <a href="http://" class="nav-link">Asd</a>
-                </div>
-            </section>
-
-
-
-            <section>
-                <input type="checkbox" name="checkbox" class="toogle" id="2">
-
-                <label for="2">Section 2
-                    <i class="fa-solid fa-angle-right"></i>
-                </label>
-                <div class="toogle-div">
-                    <a href="http://" class="nav-link">Asd</a>
-                </div>
-            </section>
-
-            <section>
-                <input type="checkbox" name="checkbox" class="toogle" id="3">
-
-                <label for="3">Section 3
-                    <i class="fa-solid fa-angle-right"></i>
-                </label>
-                <div class="toogle-div">
-                    <a href="http://" class="nav-link">Asd</a>
-                </div>
-            </section> -->
         </nav>
-        <div class="d-flex justify-content-center w-100 pt-5" style="max-height: 100%; overflow: scroll;">
-            <div class="content pb-5">
-
-                <%- contentHTML %>
+        <div class="d-flex justify-content-center w-100 pt-3" style="max-height: 100%; overflow: scroll;">
+            <div class="content pb-5 pt-5">
+                <%- contentHTML%>
 
 
             </div>
@@ -72,7 +43,25 @@
 
     </div>
 
-
 </body>
+<script src="/public/js/doc.js"></script>
+
+<script>
+    function addChapter(div) {
+        parent = div.parentElement.parentElement;
+
+        const parser = new DOMParser();
+
+
+        //SOLVING THIS FUCKER !!!!!!!!
+        let string = `<input type="text" class="nav-link w-100 border-green mt-1 mb-1" name="${div.id}" id="">`;
+        const doc = parser.parseFromString(string, 'text/html');
+
+        // Extract the first element
+        newNode = doc.body.firstElementChild;
+        parent.insertBefore(newNode, div.parentElement);
+
+    }
+</script>
 
 </html>

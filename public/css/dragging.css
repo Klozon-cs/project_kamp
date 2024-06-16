@@ -1,27 +1,23 @@
 
 
-#storeForm.dragging :where(.medium--top, .medium--bottom) {
+#storeForm.dragging{
     opacity: 0;
 }
-
-#storeForm.dragging :where(.small--top, .small--bottom) {
-    opacity: 0;
-}
-
 .dragging {
-    border: 5px dotted #ffffff;
+    border: 2px dotted black;
+    padding: 2px;
 }
 
 
 .options-menu{
-    position: absolute;
+    position: relative;
     height: 100%;
     width: 200px;
     overflow-y: scroll;
-    padding: 10px;
+    padding: 15px;
     padding-right: 0px;
     right: 0px;
-    background-color: whitesmoke;
+    background-color: rgba(245, 245, 245, 0.489);
 }
 .option{
     width: 100%;
@@ -32,8 +28,15 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    margin-bottom: 15px;
+    font-size: 14px;
+    cursor: grab;
   
 }
 .option i{
-    font-size: 50px;
+    font-size: 42px;
+}
+
+.line{
+    border-top: 5px solid red;
 }

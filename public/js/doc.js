@@ -15,22 +15,37 @@ function deleteElement(button) {
 //
 /* ------------------------------- YOUTUBE VIDEO ---------------------------------- */
 
-//Convert youtube links to enmbed link
+//Convert youtube links to embed link
 let videos = document.getElementsByClassName("video-input");
 for (let video of videos) {
-	video.addEventListener("change", () => {
-		const inputValue = event.target.value;
-		const iframe = event.target.nextElementSibling;
-		let link;
-		if (inputValue.includes("https://youtu.be/"))
-			link = inputValue.replace("https://youtu.be/", "");
+	onchangeLinkToEmbed(video)
+}
 
-		if (inputValue.includes("https://www.youtube.com/watch?v="))
-			link = inputValue.replace("https://www.youtube.com/watch?v=", "");
+function onchangeLinkToEmbed(element){
+	
+		const iframe = element.nextElementSibling;
+		const link = element.value;
+		console.log("in");
+		if(!link){
+			iframe.src = "";
+			return;
+		}
 
-		iframe.src = "https://www.youtube.com/embed/" + link;
-		event.target.value = "https://www.youtube.com/embed/" + link;
-	});
+		if(link.includes("https://www.youtube.com/embed/")){
+			iframe.src = link;
+			return;
+		};
+
+		let embed;
+		if (link.includes("https://youtu.be/"))
+			embed = link.replace("https://youtu.be/", "");
+
+		if (link.includes("https://www.youtube.com/watch?v="))
+			embed = link.replace("https://www.youtube.com/watch?v=", "");
+
+		iframe.src = "https://www.youtube.com/embed/" + embed;
+		element.value = "https://www.youtube.com/embed/" + embed;
+	
 }
 
 /* -------------------------------------------------------------------------------- */
@@ -41,15 +56,17 @@ for (let video of videos) {
 //Placeholder for div inputs
 let divs = document.getElementsByClassName("div-input");
 for (let div of divs) {
+	divPlaceholder(div);
+}
+function divPlaceholder(div){
 	div.addEventListener("focus", () => {
-		if (div.textContent == "Text") div.innerHTML = "";
+		if (event.target.textContent == "Text") event.target.innerHTML = "";
 	});
 
 	div.addEventListener("focusout", () => {
-		if (div.textContent == "") div.innerHTML = "Text";
+		if (event.target.textContent == "") event.target.innerHTML = "Text";
 	});
 }
-
 //Filling the hidden input with the editable div's content
 function divContentToInput(div) {
 	//Checking if there any content in the div or just the placeholder
@@ -65,7 +82,6 @@ function divContentToInput(div) {
 /* ------------------------------------- Ol, Ul list ------------------------------------ */
 
 //Convert 'ol' or 'ul' list content to string format devided by ';'
-const lists = document.getElementsByClassName("list-input");
 function listContentToInput(list) {
 	const input = list.nextElementSibling;
 	const list_content = list.children;
@@ -75,9 +91,10 @@ function listContentToInput(list) {
 	}
 
 	for (const li of list_content) {
-		if (li.textContent != "")
+		if(li.innerHTML != "" && li.innerHTML != '<br>'){
+			console.log(li);
 			//deviding with ';'
-			input.value += li.innerHTML + ";";
+			input.value += li.innerHTML + ";";}
 	}
 }
 
@@ -88,13 +105,13 @@ function listContentToInput(list) {
 
 //Image zooming window
 const images = document.getElementsByClassName("zoomable");
-const preview_div = document.getElementById("div-preview");
-const preview_image = document.getElementById("preview-image");
-for (const image of images) {
-	image.addEventListener("click", () => {
-		preview_image.src = event.target.src;
-		preview_div.classList.remove("d-none");
-	});
+const zoom_div = document.getElementById("div-preview");
+const zoom_image = document.getElementById("preview-image");
+
+
+function onclickZoomImage(image){
+		zoom_image.src =image.src;
+		zoom_div.classList.remove("d-none");
 }
 
 //Close the zoomed window
@@ -106,9 +123,13 @@ function closePreview(preview) {
 // ----------- Fill image_name input------------
 const fileInputs = document.getElementsByClassName("file-input");
 for (let fileInput of fileInputs) {
-	fileInput.addEventListener("change", function () {
+	onchangePreview(fileInput)
+}
+
+function onchangePreview(fileInput){
+
 		const hiddenInput = fileInput.previousElementSibling;
-		const imagePreview = event.target.nextElementSibling;
+		const imagePreview = fileInput.nextElementSibling;
 		const file = fileInput.files[0];
 
 		let reader = new FileReader();
@@ -119,22 +140,19 @@ for (let fileInput of fileInputs) {
 
 		if (file) {
 			//if there is a file then reads the data and load in the imagePreview in the reader.onloadend
-			reader.readAsDataURL(file);
 
 			//making unique file names with to the selected file dateTime
 			//(2024.06.15 13:09 -> 2024_06_15_13_09)
 			const timeStamp = new Date().toJSON().slice(0, 16).replace(/[-T:]/g, "_");
-			const newFileName =
-				timeStamp + "_" + convertSpecialCharacters(fileInput.files[0].name);
+			const newFileName = timeStamp + "_" +convertSpecialCharacters(fileInput.files[0].name);
 
 			fileInput.files = renameFile(file, newFileName);
 
 			//fill the hidden input with the files name (need it bc this will be saved to the database)
 			hiddenInput.value = newFileName;
-		} else {
-			imagePreview.src = "";
+			reader.readAsDataURL(file);
+
 		}
-	});
 }
 
 function renameFile(file, newFileName) {
@@ -151,7 +169,7 @@ function renameFile(file, newFileName) {
 }
 
 function convertSpecialCharacters(originalName) {
-	return originalName.normalize("NFKD").replace(/[\u0300-\u036F]/g, "");
+	return originalName.normalize("NFKD").replace(/[\u0300-\u036F]/g, "").replace(' ', '_');
 }
 
 /* -------------------------------------------------------------------------------- */
@@ -161,7 +179,11 @@ function convertSpecialCharacters(originalName) {
 
 //Filling the hidden inputs before submit
 document.getElementById("storeForm").onsubmit = (event) => {
-	for (const div of divs) divContentToInput(div);
+	divs = document.getElementsByClassName("div-input");
+	for (const div of divs){
+		divContentToInput(div);
+	}
+	const lists = document.getElementsByClassName("list-input");
 	for (const list of lists) {
 		listContentToInput(list);
 	}
