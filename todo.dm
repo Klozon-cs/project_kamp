@@ -5,6 +5,9 @@ TODO:
 4. making the input templates and the input rendering ✔
 5. drag and drop inputs for the edit page✔
 6. button for making new topics and subchapters in the side bar
+editable div paste problem solve 
+add edit button and next chapter button
 7. responsivety
 
 
+CLEAN the code comment everithing

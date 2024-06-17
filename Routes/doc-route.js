@@ -24,10 +24,10 @@ const upload = multer({ storage: storage });
 router.get("/", async (req, res) => {
 	let contentHTML = "";
 	let navItems = "";
-	const topics = await db.getMany("main_topics", 1, 1);
+	const topics = await db.getMany("main_topics", 1, 1 + " ORDER BY position");
 
 	for (const topic of topics) {
-		const chapters = await db.getMany("subchapters", "topic_id", topic.id);
+		const chapters = await db.getMany("subchapters", "topic_id", topic.id + " ORDER BY position");
 		navItems += templates.navItem(topic.id, topic.name, chapters);
 	}
 
@@ -42,14 +42,14 @@ router.get("/", async (req, res) => {
 router.get("/documentation/:id", async (req, res) => {
 	let contentHTML = "";
 	let navItems = "";
-	const topics = await db.getMany("main_topics", 1, 1);
+	const topics = await db.getMany("main_topics", 1, 1+ " ORDER BY position");
 
 	for (const topic of topics) {
-		const chapters = await db.getMany("subchapters", "topic_id", topic.id);
+		const chapters = await db.getMany("subchapters", "topic_id", topic.id + " ORDER BY position");
 		navItems += templates.navItem(topic.id, topic.name, chapters);
 	}
 
-	let page = await db.getMany("pages", "chapter_id", req.params.id);
+	let page = await db.getMany("pages", "chapter_id", req.params.id + " ORDER BY position");
 
 	for (const content of page) {
 		contentHTML += templates.renderContent(content);
@@ -60,40 +60,7 @@ router.get("/documentation/:id", async (req, res) => {
 
 
 
-
-
-
-//Create
-router.post("/create/chapter/:topic_id", async (req, res) => {
-	let old_chapters = await db.getMany("subchapters","topic_id", req.params.topic_id);
-
-	
-	
-	let new_chapters =req.body[req.params.topic_id];
-	for (const old of old_chapters) {
-		let stay = false;
-		for (const newC of new_chapters) {
-			if (old.id == newC) {
-				stay = true;
-			}
-			
-		}
-		if (!stay) {
-			await db.deleteMany("subchapters","id", old.id);	
-			console.log("delete" +old.id);
-		}
-	}
-
-	console.log(new_chapters);
-	console.log(old_chapters);
-
-	
-});
-
-
-
-
-
+/*---------------------------- STORE ------------------------------*/
 let data = [];
 const numOfObjects = 20; //Defindes how many picture can be on one webstite
 
@@ -130,22 +97,76 @@ router.post("/store/:chapter_id", upload.fields(data), async (req, res) => {
 
 
 
+//Create
+router.post("/create/chapter/:topic_id", async (req, res) => {
+	let old_chapters = await db.getMany("subchapters","topic_id", req.params.topic_id+ "ORDER BY position");
+
+	//delete old chapters
+	const request = req.body;
+	for (const old of old_chapters) {
+		let stay = false;
+		for (const req_name in request) {
+			if (old.id == req_name) {
+				stay = true;
+			}
+		}
+		if (!stay) {
+			await db.deleteMany("subchapters","id", old.id);	
+			console.log("delete" +old.id);
+		}
+	}
+
+	console.log(req.body);
+	
+
+	let pos_counter = 1;
+	for (const req_name in request) {
+		if (req_name.includes("new_chapter_") && request[req_name] != "") {
+			await db.insertMany("subchapters", [{
+				name:request[req_name],
+				position: pos_counter,
+				topic_id: req.params.topic_id
+			}]);
+			
+		}else if(request[req_name] != ""){
+			await db.updateMany("subchapters","id", req_name, {
+				name:request[req_name],
+				position: pos_counter
+			});	
+		}	
+
+		pos_counter++; 
+	} 
+
+	// console.log(old_chapters);
+	const referer = req.get('Referer');
+
+    res.redirect(referer);
+});
+
+
+
+
+
+
+
 
 router.get("/edit/:id", async (req, res) => {
 	let contentHTML = "";
 	let navItems = "";
-	const topics = await db.getMany("main_topics", 1, 1);
+	const topics = await db.getMany("main_topics", 1, 1 + " ORDER BY position");
+
+	const active_topics = await db.getMany("subchapters", "id", req.params.id);
 
 	for (const topic of topics) {
-		const chapters = await db.getMany("subchapters", "topic_id", topic.id);
-		navItems += templates.navItem(topic.id, topic.name, chapters);
+		const chapters = await db.getMany("subchapters", "topic_id", topic.id + " ORDER BY position");
+		navItems += templates.navItemInput(topic.id, topic.name, chapters, req.params.id, active_topics[0].topic_id);
 	}
 
-	let page_contents = await db.getMany("pages", "chapter_id", req.params.id);
+	let page_contents = await db.getMany("pages", "chapter_id", req.params.id + " ORDER BY position");
 	for (const content of page_contents) {
 		contentHTML += templates.renderInput(content);
-	}
-	console.log(req.body);
+	} 
 
 	res.render("edit", { contentHTML, navItems , id: req.params.id});
 });

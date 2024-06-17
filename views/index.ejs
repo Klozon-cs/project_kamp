@@ -17,7 +17,9 @@
 
     <div class="header">
         <div>
-            <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+            <a href="/">
+                <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+            </a>
         </div>
         <div>
             <a href="http://" class="btn--">Academy</a>
@@ -32,8 +34,8 @@
         <nav>
             <%- navItems%>
         </nav>
-        <div class="d-flex justify-content-center w-100 pt-3" style="max-height: 100%; overflow: scroll;">
-            <div class="content pb-5 pt-5">
+        <div class="d-flex justify-content-center w-100 pt-3 pb-5 mb-3" style="max-height: 100%; overflow: scroll;">
+            <div class="content pt-5">
                 <%- contentHTML%>
 
 
@@ -46,22 +48,6 @@
 </body>
 <script src="/public/js/doc.js"></script>
 
-<script>
-    function addChapter(div) {
-        parent = div.parentElement.parentElement;
 
-        const parser = new DOMParser();
-
-
-        //SOLVING THIS FUCKER !!!!!!!!
-        let string = `<input type="text" class="nav-link w-100 border-green mt-1 mb-1" name="${div.id}" id="">`;
-        const doc = parser.parseFromString(string, 'text/html');
-
-        // Extract the first element
-        newNode = doc.body.firstElementChild;
-        parent.insertBefore(newNode, div.parentElement);
-
-    }
-</script>
 
 </html>

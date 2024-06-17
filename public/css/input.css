@@ -1,5 +1,6 @@
 input {
 	padding: 2px;
+	background-color: transparent;
 }
 
 iframe {
@@ -43,9 +44,13 @@ iframe {
 
 .doc-input {
 	border: none;
-	background-color: none;
+	background-color: transparent;
 	width: 100%;
 	padding: 2px;
+}
+
+.div-input{
+	padding-right: 15px;
 }
 
 .video-input {

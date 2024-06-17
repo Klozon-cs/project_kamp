@@ -62,10 +62,6 @@ function navItem(id,topic,subchapters){
         chapters +=
         `<div class="d-flex w-100">
                 <a href="/documentation/${chapter.id}" class="nav-link w-100">${chapter.name}</a>
-                <input type="hidden" name="${id}" value="${chapter.id}">
-                <div class="d-felx justify-content-center align-items-center btnDelete">
-                    <i class="fa-solid fa-xmark fs-6 cursor-pointer" onclick="deleteElement(this)"></i>
-                </div>
         </div>`
     }
     let navitem = 
@@ -76,13 +72,8 @@ function navItem(id,topic,subchapters){
             <i class="fa-solid fa-angle-right"></i>
         </label>
         <div class="toogle-div">
-            <form action="/create/chapter/${id}" method="post" id="topicForm_id">
 
-            ${chapters}
-            <div class="nav-link d-flex justify-content-between" id="${id}">
-                <i class="fa-solid fa-plus cursor-pointer" onclick="addChapter(this)"></i>  <button type="submit" form="topicForm_id" class="btn--save">Save</button>
-            </div>
-            </form>
+            ${chapters} 
         </div>
     </section>`
     return navitem;
@@ -144,7 +135,7 @@ function titleMediumInput(content = "") {
 
 function textRegularInput(content = "Text") {
     return `   <div class="element-container draggable gap-small">
-                        <div contenteditable="true" class="doc-input div-input" onfocus="divPlaceholder(this)">${content}</div>
+                        <div contenteditable="true" class="doc-input div-input" onfocus="divPlaceholderFocus(this)" onfocusout="divPlaceholderFocusout(this)">${content}</div>
                         <input type="hidden" name="text_regular" class="doc-input" >
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
@@ -153,13 +144,16 @@ function textRegularInput(content = "Text") {
 }
 
 function listUnorderedInput(contentString = "") {
-    const items = contentString.split(";");
-    let list = ``;
+    let list = "";
+    if (contentString == ""){
+        list = "<li></li><li></li><li></li>";
+    }else{
+        const items = contentString.split(";");
+    
+        for (const item of items)
+            if (item !== "") list += `<li>${item}</li>`;
 
-    for (const item of items)
-        list += `<li>${item}</li>`;
-
-    if (contentString == "") list = "<li></li><li></li><li></li>";
+    }
 
     return `<div class="element-container draggable  gap-small" >
                     <div class="w-100">
@@ -175,14 +169,16 @@ function listUnorderedInput(contentString = "") {
 }
 
 function listOrderedInput(contentString = "") {
-    const items = contentString.split(";");
-    let list;
+    let list = "";
+    if (contentString == ""){
+        list = "<li></li><li></li><li></li>";
+    }else{
+        const items = contentString.split(";");
+    
+        for (const item of items)
+            if (item !== "") list += `<li>${item}</li>`;
 
-    for (const item of items)
-        list += `<li>${item}</li>`;
-
-    if (contentString == "") list = "<li></li><li></li><li></li>";
-
+    }
     return `  <div class="element-container draggable gap-small">
                     <div class="w-100">
                         <ol contenteditable="true" class="list-input">
@@ -223,6 +219,44 @@ function imageInput(path = "") {
             </div>`;
 }
 
+function navItemInput(topic_id,topic_name, subchapters, website_id, active_topic){
+
+
+    let chapters = ""
+    for (const chapter of subchapters) {        
+        chapters +=
+        `<div class="d-flex w-100">
+                <a href="/edit/${chapter.id}" class="nav-link w-100 static-chapter ${website_id==chapter.id ? "color--green":""} ">${chapter.name}</a>
+                <div class="d-flex d-none edit-chapter w-100">
+                    <input type="text" class="nav-link w-100 border--green mt-1 mb-1" name="${chapter.id}" value="${chapter.name}">
+                    <div class="d-flex justify-content-center align-items-center btnDelete">
+                        <i class="fa-solid fa-xmark fs-6 cursor-pointer" onclick="deleteElement(this)"></i>
+                    </div>
+                </div>
+        </div>`
+    }
+    let navitem = 
+    `<section>
+        <input type="checkbox" name="checkbox" class="toogle" id="topic-${topic_id}" ${active_topic == topic_id ? "checked":""}>
+
+        <label for="topic-${topic_id}">${topic_name}
+            <i class="fa-solid fa-angle-right"></i>
+        </label>
+        <div class="toogle-div">
+            <form action="/create/chapter/${topic_id}" method="post" id="topicForm_id">
+
+            ${chapters}
+            <div class="nav-link d-flex justify-content-between d-none edit-chapter">
+                <i class="fa-solid fa-plus cursor-pointer" onclick="addChapter(this)" id="${topic_id}"></i>  
+                <button type="submit" class="btn--save">Save</button>
+            </div>
+            </form>
+        </div>
+    </section>`
+    return navitem;
+}
+
+
 function renderInput(page_element){
     let render;
     switch (page_element.type_id) {
@@ -255,6 +289,7 @@ function renderInput(page_element){
 
 module.exports ={
     navItem,
+    navItemInput,
     renderContent,
     renderInput
 };

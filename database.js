@@ -11,7 +11,7 @@ const con = mysql.createPool({
 
 //finds Multiple record in the database and returns it as array object
 function getMany(table, field, value) {
-	const query = `SELECT * FROM ${table} WHERE ${field} = "${value}" ORDER BY position`;
+	const query = `SELECT * FROM ${table} WHERE ${field} = "${value}"`;
     return new Promise((resolve, reject) => {
 		con.getConnection((err, connection) => {
 			if (err) reject(err);

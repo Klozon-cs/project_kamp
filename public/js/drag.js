@@ -19,7 +19,7 @@ function titleMediumInput(content = "") {
 
 function textRegularInput(content = "Text") {
     return `   <div class="element-container draggable gap-small">
-                        <div contenteditable="true" class="doc-input div-input" onfocus="divPlaceholder(this)">${content}</div>
+                        <div contenteditable="true" class="doc-input div-input" onfocus="divPlaceholderFocus(this)" onfocusout="divPlaceholderFocusout(this)">${content}</div>
                         <input type="hidden" name="text_regular" class="doc-input" >
                         <div class="btnDelete">
                             <i class="fa-solid fa-xmark" onclick="deleteElement(this)"></i>
@@ -132,6 +132,7 @@ function renderInput(type_id) {
 
 
 const sortableList = document.getElementById('storeForm');
+const scroll_div = document.getElementById('scroll_div');
 let list_items = sortableList.querySelectorAll(".draggable");
 let type = false; //false = list item, true = option item
 
@@ -158,8 +159,7 @@ const initSortableList = (e) => {
     // Finding the sibling after which the dragging item should be placed
     nextSibling = siblings.find(sibling => {
         // const xCondition = e.clientX <= sibling.offsetLeft + sibling.offsetWidth / 1.5;
-        const yCondition = e.clientY <= sibling.offsetTop + sibling.offsetHeight / 1.2;
-
+        const yCondition = e.clientY <= sibling.offsetTop +  (sibling.offsetHeight/1.5) - Math.ceil(scroll_div.scrollTop);
         return yCondition;
         // return xCondition && yCondition;
     });

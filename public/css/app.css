@@ -7,9 +7,14 @@
 	--main-green: #8ab580;
 }
 
-.border-green{
-	border: 2px solid var(--main-green);
+.color--green{
+	color: var(--main-green) !important;
 }
+
+.border--green{
+	border: 2px solid var(--main-green) !important;
+}
+
 .bg--green{
 	background-color: var(--main-green) !important;
 }
@@ -58,6 +63,7 @@ body {
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
+	background-color: rgb(250, 250, 250);
 }
 
 .header {

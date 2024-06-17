@@ -17,7 +17,9 @@
 
     <div class="header">
         <div>
-            <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+            <a href="/">
+                <img src="/public/img/logo.png" alt="Project kamp logo" class="logo">
+            </a>
         </div>
         <div>
             <a href="http://" class="btn--">Academy</a>
@@ -29,17 +31,19 @@
             onclick="closePreview(this)">
             <img src="" alt="" id="preview-image">
         </div>
-        <nav>
+        <nav class="position-relative">
             <%- navItems%>
+
+                <button type="submit" class="btn--save" onclick="editChapters()"
+                    style="position: absolute; right: 10px; top:10px">Edit chapters</button>
         </nav>
-        <div class="d-flex justify-content-center w-100 pt-3" style="max-height: 100%; overflow: scroll;">
+        <div class="d-flex justify-content-center w-100 pt-3" style="height: 100%; overflow: scroll;" id="scroll_div">
             <div class="content pb-5">
-                <form action="/store/<%- id %>" method="post" id="storeForm" class="pt-5" "
-                    enctype="multipart/form-data">
+                <form action="/store/<%- id %>" method="post" id="storeForm" class="pt-5" enctype="multipart/form-data">
                     <%- contentHTML%>
-                    <div class="draggable"></div>
+                        <div class="draggable pt-5"></div>
                 </form>
-                <button type="submit" class="btn btn-success mb-5 mt-5" form="storeForm">Save</button>
+                <button type="submit" form="storeForm" class="btn btn-success mb-5">Save</button>
             </div>
         </div>
         <div class="options-menu">
@@ -77,5 +81,45 @@
 </body>
 <script src="/public/js/doc.js"></script>
 <script src="/public/js/drag.js"></script>
+<script>
+    let unique_id = 0;
+    function addChapter(btnPlus) {
+        parent = btnPlus.parentElement.parentElement;
+
+        const parser = new DOMParser();
+
+
+        //SOLVING THIS FUCKER !!!!!!!!
+        let string = `<input type="text" class="nav-link w-100 border--green mt-1 mb-1" name="new_chapter_${unique_id}" id="">`;
+        const doc = parser.parseFromString(string, 'text/html');
+
+        unique_id++;
+        // Extract the first element
+        newNode = doc.body.firstElementChild;
+        parent.insertBefore(newNode, btnPlus.parentElement);
+
+    }
+
+    function editChapters() {
+        const chapters = document.getElementsByClassName('edit-chapter');
+        const static_chapters = document.getElementsByClassName('static-chapter');
+        const btn_saveChapters = document.getElementById('save_chapters')
+
+        for (const chapter_input of chapters) {
+            chapter_input.classList.remove('d-none')
+        }
+
+        for (const chapter of static_chapters) {
+            chapter.classList.add('d-none')
+        }
+        event.target.classList.add('d-none')
+        btn_saveChapters.classList.remove('d-none')
+    }
+
+    document.querySelector('[contenteditable]').addEventListener('paste', function (event) {
+        event.preventDefault();
+        document.execCommand('inserttext', false, event.clipboardData.getData('text/plain'));
+    });
+</script>
 
 </html>

@@ -56,16 +56,16 @@ function onchangeLinkToEmbed(element){
 //Placeholder for div inputs
 let divs = document.getElementsByClassName("div-input");
 for (let div of divs) {
-	divPlaceholder(div);
+	divPlaceholderFocus(div);
+	divPlaceholderFocusout(div);
 }
-function divPlaceholder(div){
-	div.addEventListener("focus", () => {
-		if (event.target.textContent == "Text") event.target.innerHTML = "";
-	});
+function divPlaceholderFocus(div){
 
-	div.addEventListener("focusout", () => {
-		if (event.target.textContent == "") event.target.innerHTML = "Text";
-	});
+		if (div.textContent == "Text") event.target.innerHTML = "";
+}
+
+function divPlaceholderFocusout(div){
+	if (div.textContent == "") event.target.innerHTML = "Text";
 }
 //Filling the hidden input with the editable div's content
 function divContentToInput(div) {
@@ -91,10 +91,10 @@ function listContentToInput(list) {
 	}
 
 	for (const li of list_content) {
-		if(li.innerHTML != "" && li.innerHTML != '<br>'){
+		if(li.innerHTML != ""){
 			console.log(li);
 			//deviding with ';'
-			input.value += li.innerHTML + ";";}
+			input.value += li.innerHTML.replace('&nbsp;', ' ') + ";";}
 	}
 }
 
